@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Recommender System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+        }
+        input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #28a745;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .recommendations {
+            margin-top: 20px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Movie Recommender System</h1>
+        <input type="text" id="movie-input" placeholder="Enter a movie title">
+        <button onclick="getRecommendations()">Recommend</button>
+        <div class="recommendations" id="recommendations"></div>
+    </div>
+
+    <script>
+        async function getRecommendations() {
+            const movieTitle = document.getElementById("movie-input").value;
+            const response = await fetch("http://127.0.0.1:8000/recommend/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ title: movieTitle })
+            });
+
+            const data = await response.json();
+            const recommendationsDiv = document.getElementById("recommendations");
+
+            if (response.status === 200) {
+                const recommendations = data.recommendations.map(movie => `<li>${movie}</li>`).join("");
+                recommendationsDiv.innerHTML = `<ul>${recommendations}</ul>`;
+            } else {
+                recommendationsDiv.innerHTML = `<p>${data.detail}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
